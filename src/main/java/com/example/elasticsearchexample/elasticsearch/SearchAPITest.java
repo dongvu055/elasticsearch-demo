@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +19,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1")
 public class SearchAPITest {
-
+    
     @Autowired
     private RestClient restClient;
-
+    
     // Get all index
     @GetMapping("/index")
     public List<String> getIndex() {
@@ -35,7 +32,8 @@ public class SearchAPITest {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode node = objectMapper.readTree(EntityUtils.toString(client.getEntity()));
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> result = mapper.convertValue(node, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> result = mapper.convertValue(node, new TypeReference<Map<String, Object>>() {
+            });
             List<String> listIndex = new ArrayList<>();
             result.forEach((s, o) -> listIndex.add(s));
             return listIndex;
@@ -80,7 +78,9 @@ public class SearchAPITest {
 
     //Search document
     @GetMapping("/document/search")
-    public JsonNode getAllDocumentOnIndex(@RequestParam(name = "index", required = false) String index, @RequestParam(value = "list-field") String listField, @RequestParam(value = "list-value") String valueField) {
+    public JsonNode getAllDocumentOnIndex(@RequestParam(name = "index", required = false) String index,
+                                          @RequestParam(value = "list-field") String listField,
+                                          @RequestParam(value = "list-value") String valueField) {
         StringBuilder str = new StringBuilder();
         if (!ObjectUtils.isEmpty(index)) str.append("/").append(index);
         str.append("/_search");
